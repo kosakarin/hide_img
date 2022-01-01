@@ -36,10 +36,14 @@ async def save_img(image_url): #保存图片 #none使用的话尽量不要异步
 
 
 def make_image(up_img, hide_img):
-    #将图片等比例处理
-    hide_img = hide_img.resize((up_img.size[0], int(hide_img.size[1] * (up_img.size[0] / hide_img.size[0]))),Image.ANTIALIAS) 
+    #先获取两张图片中宽度较大的宽度
+    max_size = (max(up_img.size[0], hide_img.size[0]), 0)
+    #将图片依据较大的宽度等比例处理
+    up_img = up_img.resize((max_size[0], int(up_img.size[1] * (max_size[0] / up_img.size[0]))),Image.ANTIALIAS)
+    hide_img = hide_img.resize((max_size[0], int(hide_img.size[1] * (max_size[0] / hide_img.size[0]))),Image.ANTIALIAS)
     #获取处理后生成图片的大小
-    max_size = (up_img.size[0], max(up_img.size[1], hide_img.size[1]))
+    max_size = (max_size[0], max(up_img.size[1], hide_img.size[1]))
+    
     if hide_img.size[1] == up_img.size[1]: #大小相等直接转为灰度图片
         up_img = up_img.convert('L')
         hide_img = hide_img.convert('L')
